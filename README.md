@@ -1,2 +1,2 @@
 # POLYTECHDEV
-Для Дисплины DevOps
+Для Дисциплины DevOps
