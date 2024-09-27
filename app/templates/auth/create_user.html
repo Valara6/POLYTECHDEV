@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 class='mb-3'>Создание пользователя</h1>
+<form method="POST">
+    <div class="mb-3">
+        <label for="InputName" class="form-label">Имя</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="InputLastName" class="form-label">Фамилия</label>
+        <input type="text" name="lastname" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="InputMiddleName" class="form-label">Отчество</label>
+        <input type="text" name="middlename" class="form-control">
+    </div>
+    <div class="mb-3">
+        <select class="form-select" name="role" aria-label="Default select example" >
+            <option value="2">Я покупатель</option>
+            <option value="3">Я продавец</option>
+          </select>
+    </div>
+    <div class="mb-3">
+        <label for="InputLogin" class="form-label">Логин</label>
+        <input type="text" name="login" class="form-control {%if 'login' in errors%} is-invalid{%endif%}" required>
+        {% if 'login' in errors %}
+        <div class="invalid-feedback">
+            <p>{{ errors['login'] }}</p>
+        </div>
+        {% endif %}
+    </div>
+    <div class="mb-3">
+        <label for="InputPassword" class="form-label">Пароль</label>
+        <input type="password" name="password" class="form-control {%if 'password' in errors%} is-invalid{%endif%}" required>
+        {% if 'password' in errors %}
+        <div class="invalid-feedback">
+            <p>{{ errors['password'] }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Создать</button>
+</form>
+{% endblock %}
