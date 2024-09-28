@@ -1,7 +1,7 @@
 import os
 
 ADMIN_ROLE_ID=1
-SELLER_ROLE_ID=2
+SELLER_ROLE_ID=3
 
 # Абсолютный путь к директории с базой данных
 
