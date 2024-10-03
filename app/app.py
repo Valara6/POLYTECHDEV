@@ -97,3 +97,6 @@ def create_auction():
             db.session.rollback()
             flash(f'Ошибка при добавлении аукциона: {str(e)}', 'danger')
     return render_template('create_auction.html')
+
+if __name__ == '__main__':
+   app.run(host='0.0.0.0')
