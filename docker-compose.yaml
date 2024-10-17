@@ -1,0 +1,24 @@
+version: '3'
+
+
+services:
+  flask-app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '5000:5000'
+    volumes:
+      - ./app:/app
+  sqlite-db:
+    container_name: sqlite-db
+    image: keinos/sqlite3
+    restart: always
+    environment:
+     - SQLITE_DATABASE=app
+    volumes: 
+     - ./app/db:/app/db
+networks:
+  webnet:
+    driver: bridge
