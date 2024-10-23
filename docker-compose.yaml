@@ -21,4 +21,5 @@ services:
      - ./app/db:/app/db
 networks:
   webnet:
-    driver: bridge
+    external: true
+    #driver: bridge
