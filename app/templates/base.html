@@ -27,9 +27,6 @@
                     </li>
               {% endif %}
             </ul>
-            {%if current_user.role_id==3%}
-            <a href="{{url_for('add_item')}}">Добавить предмет</a>
-            {% endif %}
             {%if current_user.role_id==1%}
             <a href="{{url_for('create_auction')}}">Добавить аукцион</a>
             {% endif %}

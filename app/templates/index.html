@@ -1,1 +1,40 @@
 {% extends 'base.html' %}
+
+{% block content %}
+<h2>Текущие аукционы</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Название аукциона</th>
+            <th>Описание</th>
+            <th>Место</th>
+            <th>Дата проведения</th>
+            <th>Время старта</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for auction in auctions %}
+        <tr>
+            <td>{{ auction.auction_name }}</td>
+            <td>{{ auction.description }}</td>
+            <td>{{ auction.place }}</td>
+            <td>{{ auction.auction_date.strftime('%d-%m-%Y') }}</td>
+            <td>{{ auction.auction_time.strftime('%H:%M') }}</td>
+            <td>
+                {% if current_user.role_id == 2 %}
+                    <a href="{{ url_for('add_item', auction_id=auction.id) }}" class="btn btn-primary">Выставить предмет</a>
+                {% elif current_user.role_id == 3 or current_user.role_id == 1%}
+                    <a href="{{ url_for('view_auction', auction_id=auction.id) }}" class="btn btn-success">Участвовать в аукционе</a>
+                {% else %}
+                    <span class="text-muted">Нет доступа</span>
+                {% endif %}
+            </td>
+            
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
