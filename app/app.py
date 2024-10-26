@@ -1,11 +1,10 @@
 from flask import Flask, render_template, redirect, url_for, request, flash, send_from_directory, current_app
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from auth import bp as auth_bp, init_login_manager
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from flask_login import login_required, current_user
 from datetime import datetime
 from auth import checkRole
+from flask_migrate import Migrate
 
 # Импорт моделей
 from db.models import db, Role, User, Lot, Auction
@@ -36,29 +35,33 @@ def handle_sqlalchemy_error(err):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    auctions = db.session.execute(db.select(Auction)).scalars()
+    return render_template('index.html', auctions=auctions)
 
 
-@app.route('/add_item', methods=['GET', 'POST'])
+@app.route('/add_item/<int:auction_id>', methods=['GET', 'POST'])
 @login_required
 @checkRole('add_item')
-def add_item():
-    if request.method=="POST":
-        user_id=current_user.id
-        item_name=request.form.get('lot_name')
-        item_description=request.form.get('description')
-        item_price=request.form.get('price')
+def add_item(auction_id):
+    if request.method == "POST":
+        user_id = current_user.id
+        item_name = request.form.get('lot_name')
+        item_description = request.form.get('description')
+        item_price = request.form.get('price')
+        
         try:
-            new_item= Lot(
-            lot_name=item_name,
-            description=item_description,
-            price=item_price,
-            user_id=user_id)
+            new_item = Lot(
+                lot_name=item_name,
+                description=item_description,
+                price=item_price,
+                user_id=user_id,
+                auction_id=auction_id  # Связываем предмет с аукционом
+            )
             
             db.session.add(new_item)
             db.session.commit()
-            flash('Вы успешно добавили предмет', 'success')
-            return redirect(url_for('index'))
+            flash('Вы успешно добавили предмет на аукцион', 'success')
+            return redirect(url_for('view_auction', auction_id=auction_id))
         except SQLAlchemyError as e:
             db.session.rollback()
             flash(f'Ошибка при добавлении предмета: {str(e)}', 'danger')
@@ -98,5 +101,8 @@ def create_auction():
             flash(f'Ошибка при добавлении аукциона: {str(e)}', 'danger')
     return render_template('create_auction.html')
 
-if __name__ == '__main__':
-   app.run(host='0.0.0.0')
+@app.route('/auction/<int:auction_id>', methods=['GET'])
+def view_auction(auction_id):
+    auction = db.session.query(Auction).filter_by(id=auction_id).first()
+    items = db.session.query(Lot).filter_by(auction_id=auction_id).all()  # Получаем все предметы на аукционе
+    return render_template('view_auction.html', auction=auction, items=items)
