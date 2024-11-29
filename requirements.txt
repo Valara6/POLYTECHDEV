@@ -1,5 +1,5 @@
 alembic==1.13.3
-astroid==3.3.5
+astroid==3.2.4
 bandit==1.7.10
 blinker==1.8.2
 click==8.1.7
