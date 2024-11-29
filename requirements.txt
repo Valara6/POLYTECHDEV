@@ -6,7 +6,7 @@ blinker==1.8.2
 chardet==5.2.0
 click==8.1.7
 colorama==0.4.6
-coverage==7.6.8
+coverage==7.6.1
 diff_cover==9.2.0
 dill==0.3.9
 exceptiongroup==1.2.2
