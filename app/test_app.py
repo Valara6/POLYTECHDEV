@@ -5,6 +5,7 @@ from db.models import db, Role, User, Lot, Auction
 from app import app as main_app
 from werkzeug.security import generate_password_hash
 from configure import ADMIN_ROLE_ID, SELLER_ROLE_ID
+from datetime import datetime, date, time
 
 @pytest.fixture
 def app():
@@ -31,7 +32,6 @@ def session(app):
     """Создает сессию для взаимодействия с базой данных."""
     with app.app_context():
         yield db.session
-
 
 @pytest.fixture
 def init_roles(app):
@@ -82,6 +82,43 @@ def test_user(app):
         # Используем сессию для запроса
         session = db.session
         return session.execute(db.select(User).filter_by(username='testuser')).scalar_one()
+    
+@pytest.fixture
+def seller_user(app, init_roles):
+    """Создает тестового пользователя с ролью продавца."""
+    with app.app_context():
+        user = User(
+            username='selleruser',
+            password_hash=generate_password_hash('sellerpassword'),
+            first_name='Seller',
+            last_name='User',
+            middle_name='S.',
+            role_id=SELLER_ROLE_ID,
+            is_active=True
+        )
+        db.session.add(user)
+        db.session.commit()
+        return db.session.get(User, user.id)  # Возвращаем свежий объект, привязанный к сессии
+
+
+@pytest.fixture
+def test_auction(app, session):
+    """Создает тестовый аукцион."""
+    with app.app_context():
+        auction = Auction(
+            auction_name="Test Auction",
+            description="A test auction for testing purposes.",
+            place="Test Place",
+            auction_date=date(2024, 1, 1),
+            auction_time=time(12, 0)
+        )
+        session.add(auction)
+        session.commit()
+        # Возвращаем объект, полученный из активной сессии
+        return session.execute(
+            db.select(Auction).filter_by(auction_name="Test Auction")
+        ).scalar_one()
+
 
 def test_index_page(client):
     """Проверка, что главная страница загружается."""
@@ -109,7 +146,6 @@ def test_successful_login(client, test_user):
     }, follow_redirects=True)
     assert response.status_code == 200
     assert 'Вы успешно аутентифицированы.'.encode('utf-8') in response.data
-
 
 def test_unsuccessful_login(client):
     """Проверка ошибки входа с неверным паролем."""
@@ -160,3 +196,28 @@ def test_unauthorized_access(client):
     response = client.get('/create_auction', follow_redirects=True)
     assert response.status_code == 200
     assert 'Для доступа к данной странице необходимо пройти процедуру аутентификации.'.encode('utf-8') in response.data
+
+def test_add_item_to_auction_as_seller(client, seller_user, test_auction, session):
+    """Проверка, что продавец может добавить предмет на аукцион."""
+    
+    # Логинимся как продавец
+    with client.session_transaction() as flask_session:
+        flask_session['_user_id'] = seller_user.id
+    
+    # Создаем тестовый предмет и привязываем его к аукциону
+    response = client.post(f'/add_item/{test_auction.id}', data={
+        'lot_name': 'Test Lot',
+        'description': 'A test lot for auction.',
+        'price': 100,
+    }, follow_redirects=True)
+    
+    assert response.status_code == 200
+    assert 'Вы успешно добавили предмет на аукцион'.encode('utf-8') in response.data
+
+    # Проверка в базе данных
+    added_item = session.execute(
+        db.select(Lot).filter_by(lot_name='Test Lot')
+    ).scalar_one_or_none()
+    assert added_item is not None
+    assert added_item.lot_name == 'Test Lot'
+    assert added_item.auction_id == test_auction.id
