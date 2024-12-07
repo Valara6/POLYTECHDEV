@@ -23,12 +23,16 @@
             <td>{{ auction.auction_date.strftime('%d-%m-%Y') }}</td>
             <td>{{ auction.auction_time.strftime('%H:%M') }}</td>
             <td>
-                {% if current_user.role_id == 2 %}
+                {% if current_user.role_id == 3 %}
                     <a href="{{ url_for('add_item', auction_id=auction.id) }}" class="btn btn-primary">Выставить предмет</a>
-                {% elif current_user.role_id == 3 or current_user.role_id == 1%}
+                {% elif current_user.role_id == 2 or current_user.role_id == 1%}
                     <a href="{{ url_for('view_auction', auction_id=auction.id) }}" class="btn btn-success">Участвовать в аукционе</a>
                 {% else %}
                     <span class="text-muted">Нет доступа</span>
+                {% endif %}
+
+                {% if current_user.role_id == 1%}
+                    <a href="#" class="btn btn-danger" data-action="{{ url_for('delete_auction', auction_id=auction.id)}}" data-bs-toggle="modal" data-bs-target="#deleteAuction">Удалить аукцион</a>
                 {% endif %}
             </td>
             
