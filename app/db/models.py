@@ -73,22 +73,28 @@ class Lot(Base):
     price: Mapped[int] = mapped_column(Integer, nullable=False)
     timestamp: Mapped[datetime] = mapped_column(TIMESTAMP, default=datetime.utcnow, nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
-    auction_id: Mapped[int] = mapped_column(ForeignKey('auctions.id'), nullable=True)
+    auction_id: Mapped[int] = mapped_column(ForeignKey('auctions.id', ondelete="CASCADE"), nullable=True)
 
     user = relationship("User")
-    auction = relationship("Auction")
-    
+    auction = relationship("Auction", back_populates="lots")
+
 
     
 class Auction(Base):
-     __tablename__ = 'auctions'
+    __tablename__ = 'auctions'
 
-     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-     auction_name: Mapped[str] = mapped_column(String(255), nullable=False)
-     description: Mapped[str] = mapped_column(Text)
-     place: Mapped[str] = mapped_column(String(255), nullable=False)
-     auction_date: Mapped[date] = mapped_column(Date, nullable=False)
-     auction_time: Mapped[time] = mapped_column(Time, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    auction_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(Text)
+    place: Mapped[str] = mapped_column(String(255), nullable=False)
+    auction_date: Mapped[date] = mapped_column(Date, nullable=False)
+    auction_time: Mapped[time] = mapped_column(Time, nullable=False)
+
+    # Связь с Lot
+    lots: Mapped[list['Lot']] = relationship(
+        "Lot", back_populates="auction", cascade="all, delete-orphan"
+    )
+
 
      
 
