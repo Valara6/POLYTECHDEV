@@ -1,0 +1,23 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.1, pytest-8.3.3, pluggy-1.5.0 -- /Users/macbookegor/Desktop/АЦ/POLYTECHDEV/myenv_flask/bin/python3.12
+cachedir: .pytest_cache
+rootdir: /Users/macbookegor/Desktop/АЦ/POLYTECHDEV/app
+collecting ... collected 9 items
+
+test_app.py::test_index_page PASSED                                      [ 11%]
+test_app.py::test_login_page PASSED                                      [ 22%]
+test_app.py::test_create_user_page PASSED                                [ 33%]
+test_app.py::test_successful_login PASSED                                [ 44%]
+test_app.py::test_unsuccessful_login PASSED                              [ 55%]
+test_app.py::test_create_auction PASSED                                  [ 66%]
+test_app.py::test_create_user PASSED                                     [ 77%]
+test_app.py::test_unauthorized_access PASSED                             [ 88%]
+test_app.py::test_add_item_to_auction_as_seller PASSED                   [100%]
+
+=============================== warnings summary ===============================
+test_app.py::test_add_item_to_auction_as_seller
+  /Users/macbookegor/Desktop/АЦ/POLYTECHDEV/myenv_flask/lib/python3.12/site-packages/sqlalchemy/sql/schema.py:3596: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    return util.wrap_callable(lambda ctx: fn(), fn)  # type: ignore
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+========================= 9 passed, 1 warning in 0.65s =========================
