@@ -12,4 +12,4 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db', 'app.db')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Установка секретного ключа для сессий
-SECRET_KEY='b3baa1cb519a5651c472d1afa1b3f4e04f1adf6909dae88a4cd39adc0ddd9732'#nosec
+SECRET_KEY='b3baa1cb519a5651c472d1afa1b3f4e04f1adf6909dae88a4cd39adc0ddd9732'

@@ -106,3 +106,24 @@ def view_auction(auction_id):
     auction = db.session.query(Auction).filter_by(id=auction_id).first()
     items = db.session.query(Lot).filter_by(auction_id=auction_id).all()  # Получаем все предметы на аукционе
     return render_template('view_auction.html', auction=auction, items=items)
+
+
+@app.route('/delete_auction/<int:auction_id>', methods=['GET'])
+def delete_auction(auction_id):
+    auction = db.session.query(Auction).filter_by(id=auction_id).first()
+
+    if not auction:
+        flash('Аукцион не найден.', 'danger')
+        return redirect(url_for('index'))
+
+    try:
+        app.logger.info(f"Удаляем аукцион: {auction.id}, {auction.auction_name}")
+        db.session.delete(auction)
+        db.session.commit()
+        flash('Аукцион успешно удален.', 'success')
+    except SQLAlchemyError as err:
+        app.logger.error(f"Ошибка при удалении аукциона {auction_id}: {err}")
+        flash(f'Ошибка при удалении аукциона: {err}', 'danger')
+        db.session.rollback()
+
+    return redirect(url_for('index'))
