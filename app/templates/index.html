@@ -32,7 +32,12 @@
                 {% endif %}
 
                 {% if current_user.role_id == 1%}
-                    <a href="#" class="btn btn-danger" data-action="{{ url_for('delete_auction', auction_id=auction.id)}}" data-bs-toggle="modal" data-bs-target="#deleteAuction">Удалить аукцион</a>
+                <button type="button" class="btn btn-danger" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#deleteAuction"
+                    data-action="{{ url_for('delete_auction', auction_id=auction.id) }}">
+                    Удалить
+                </button>           
                 {% endif %}
             </td>
             
@@ -40,5 +45,27 @@
         {% endfor %}
     </tbody>
 </table>
+
+<div class="modal fade" id="deleteAuction" tabindex="-1" aria-labelledby="deleteAuctionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteAuctionLabel">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите удалить аукцион "<span class="auction-title"></span>"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form class="modal-form" method="POST" action="">
+                    <button type="submit" class="btn btn-danger confirm-delete">Да, удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='deleteAuction.js') }}"></script>
 
 {% endblock %}
